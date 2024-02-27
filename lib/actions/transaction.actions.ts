@@ -7,6 +7,7 @@ import Transaction from "../database/models/transaction.model";
 import { updateCredits } from "./user.actions";
 
 export async function checkoutCredits(transaction: CheckoutTransactionParams) {
+    console.log("checkoutCredits -> transaction", transaction)
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
     const amount = Number(transaction.amount) * 100;
@@ -36,14 +37,14 @@ export async function checkoutCredits(transaction: CheckoutTransactionParams) {
 }
 
 export async function createTransaction(transaction: CreateTransactionParams) {
+    console.log("Creating transaction")
     try{
         await connectToDatabase();
 
         //Create a new transaction with the buyerId
         const newTransaction = await Transaction.create({
-            ...transaction,
-            buyer: transaction.buyerId
-        });
+            ...transaction, buyer: transaction.buyerId
+          })
 
         await updateCredits(transaction.buyerId, transaction.credits);
 
